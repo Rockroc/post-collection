@@ -144,7 +144,7 @@ class ResourceController extends Controller
                 $ecshopImg[] = 'http://or6dx15ll.bkt.clouddn.com/'.$res['key'];
             }
             //删除图片
-            unlink($imgData['saveDir'].$imgData['fileName']);
+//            unlink($imgData['saveDir'].$imgData['fileName']);
         }
 
         return $ecshopImg;
