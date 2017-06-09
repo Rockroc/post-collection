@@ -60,6 +60,7 @@ class ResourceController extends Controller
         $images = \Qiniu\json_decode($request->images);
 
         $ecshopImg = $this->getImages($images);
+
         $response = $this->http->post(env('ECSHOP_API_URL').'ecapi.product.store', [
             'form_params' => [
                 'cat_id'=>$request->cat_id,
@@ -142,9 +143,11 @@ class ResourceController extends Controller
             $res = $this->upload($imgData['saveDir'].$imgData['fileName']);
             if($res){
                 $ecshopImg[] = 'http://or6dx15ll.bkt.clouddn.com/'.$res['key'];
+            }else{
+                var_dump($res);
             }
             //删除图片
-//            unlink($imgData['saveDir'].$imgData['fileName']);
+            unlink($imgData['saveDir'].$imgData['fileName']);
         }
 
         return $ecshopImg;
@@ -165,14 +168,13 @@ class ResourceController extends Controller
         $key = date('YmdHis').rand(100,999).'.'.pathinfo($image,PATHINFO_EXTENSION);
         list($ret, $error) = $upManager->putFile($token, $key, public_path($image));
         if ($error !== null) {
-//            var_dump($error);
             return false;
         } else {
             return $ret;
         }
     }
 
-    private function download_image($url, $fileName = '', $dirName, $fileType = array('jpg', 'gif', 'png'), $type = 1)
+    private function download_image($url, $fileName = '', $dirName, $fileType = array('jpg', 'gif', 'png','jpeg'), $type = 1)
     {
         if ($url == '')
         {
