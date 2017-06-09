@@ -48,8 +48,8 @@ class ResourceController extends Controller
 
         $images = $res['images'];
         $title = $res['title'];
-        $content = $res['content'];
-
+        $content = base64_encode(($res['content']));
+//        echo $content;
         $imagesJson = \GuzzleHttp\json_encode($images);
 
         return view('detail',compact('images','title','content','categories','brands','imagesJson'));
