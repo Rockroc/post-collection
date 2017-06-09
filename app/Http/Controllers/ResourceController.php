@@ -66,6 +66,7 @@ class ResourceController extends Controller
                 'cat_id'=>$request->cat_id,
                 'goods_name'=>$request->goods_name,
                 'brand_id'=>$request->brand_id,
+                'shop_price'=>$request->shop_price,
                 'market_price'=>$request->market_price,
                 'goods_desc'=>$request->goods_desc,
                 'galleries'=>$ecshopImg
