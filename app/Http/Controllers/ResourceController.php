@@ -57,6 +57,9 @@ class ResourceController extends Controller
 
     public function import(Request $request)
     {
+        $images = \Qiniu\json_decode($request->images);
+
+        $ecshopImg = $this->getImages($images);
         $response = $this->http->post(env('ECSHOP_API_URL').'ecapi.product.store', [
             'form_params' => [
                 'cat_id'=>$request->cat_id,
@@ -64,7 +67,7 @@ class ResourceController extends Controller
                 'brand_id'=>$request->brand_id,
                 'market_price'=>$request->market_price,
                 'goods_desc'=>$request->goods_desc,
-                'galleries'=>\Qiniu\json_decode($request->images)
+                'galleries'=>$ecshopImg
             ],
         ]);
         if($response){
