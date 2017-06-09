@@ -18,7 +18,7 @@
                  </select>
 
                 <div class="search-input">
-                    <input type="text" name="keyword" class="form-control" placeholder="输入音乐名称">
+                    <input type="text" name="keyword" class="form-control" placeholder="输入乐器名称">
                 </div>
             </div>
             <div id="search-button">
