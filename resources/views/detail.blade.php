@@ -18,6 +18,7 @@
             <div class="panel-heading h2 text-center"><input type="text" name="goods_name" value="{{$title}}" /></div>
             <input type="hidden" name="images" value="{{$imagesJson}}">
             <input type="hidden" name="goods_desc" value="{{$content}}">
+            <input type="hidden" name="type" value="{{$type}}">
             <div class="panel-body">
                 <div class="row">
 

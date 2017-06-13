@@ -18,7 +18,12 @@ class ResourceController extends Controller
 
     public function __construct(Client $http)
     {
-        $this->http = $http;
+        $client = new Client([
+
+              'timeout' => 0,
+
+        ]);
+        $this->http = $client;
     }
 
     public function index(Request$request)
@@ -38,6 +43,7 @@ class ResourceController extends Controller
 
         //brands
         $response = $this->http->post(env('ECSHOP_API_URL').'ecapi.brand.list', [
+
             'form_params' => [
                 'page' => 1,
                 'per_page' => 30
@@ -51,23 +57,53 @@ class ResourceController extends Controller
 //        echo $content;
         $imagesJson = \GuzzleHttp\json_encode($images);
 
-        return view('detail',compact('images','title','content','categories','brands','imagesJson'));
+        return view('detail',compact('type','images','title','content','categories','brands','imagesJson'));
     }
 
     public function import(Request $request)
     {
+        set_time_limit(0);
+
         $images = \Qiniu\json_decode($request->images);
 
         $ecshopImg = $this->getImages($images);
 
+        $goods_name = $request->goods_name;
+        $content = base64_decode($request->goods_desc);
+
+        if($request->type=='great'){
+            $goods_name = @iconv('UTF-8','gb2312',$goods_name);
+            //匹配出详情里的图片上传到七牛并替换url
+            $prel = '/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg]))[\'|\"].*?[\/]?>/';
+            preg_match_all($prel, $content, $arr);
+            $image_base_url = 'http://www.musicgw.com/';
+            foreach($arr[1] as $value){
+                preg_match("/Uploadfile(.*)/i",$value,$item);
+                $img = $image_base_url.$item[0];
+                $test[] = $img;
+                //下载并保存图片
+                $imgData = $this->download_image($img,'','uploads/');
+                //上传图片
+                $res = $this->upload($imgData['saveDir'].$imgData['fileName']);
+                if($res){
+                    unlink($imgData['saveDir'].$imgData['fileName']);
+                    $replaceUrl = 'http://or6dx15ll.bkt.clouddn.com/'.$res['key'];
+                    $content = str_replace($value,$replaceUrl,$content);
+                }
+            }
+        }
+
+
+
         $response = $this->http->post(env('ECSHOP_API_URL').'ecapi.product.store', [
+
             'form_params' => [
                 'cat_id'=>$request->cat_id,
                 'goods_name'=>$request->goods_name,
                 'brand_id'=>$request->brand_id,
                 'shop_price'=>$request->shop_price,
                 'market_price'=>$request->market_price,
-                'goods_desc'=>$request->goods_desc,
+                'goods_desc'=>base64_encode($content),
                 'galleries'=>$ecshopImg
             ],
         ]);
@@ -93,6 +129,8 @@ class ResourceController extends Controller
 
         preg_match($prel, $html, $arr);
         $content = $arr[0];
+
+
 
 //        echo $html;
 //        $prel = "/<A style=\"DISPLAY: none\" id=show_big_img\s*href=\"(.*)\" target=_blank>/";
@@ -190,17 +228,20 @@ class ResourceController extends Controller
         return $ecshopImg;
     }
 
-    private function upload($image)
+    private function upload($image,$checkSize=true)
     {
         $upManager = new UploadManager();
         $auth = new Auth($this->accessKey, $this->secretKey);
         $bucket = 'ecshop';
         $token = $auth->uploadToken($bucket);
 
-        $filesize = abs(filesize($image));
-        if($filesize<15360){
-            return false;
+        if($checkSize){
+            $filesize = abs(filesize($image));
+            if($filesize<15360){
+                return false;
+            }
         }
+
 
         $key = date('YmdHis').rand(100,999).'.'.pathinfo($image,PATHINFO_EXTENSION);
         list($ret, $error) = $upManager->putFile($token, $key, public_path($image));
