@@ -1,5 +1,6 @@
 body{
-    background:#ABCDEF;
+    background:url("../images/music.jpeg");
+    background-size:cover;
 }
 #search-container{
     display: flex;
