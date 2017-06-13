@@ -11,7 +11,7 @@
 </head>
 <body>
     <div id="search-container">
-        <form action="{{url('search')}}" method="get">
+        <form action="{{url('search')}}" method="get" target="_blank">
             <div id="search-box">
                 <select name="type" class="form-control">
                     <option value="vox">vox</option>
