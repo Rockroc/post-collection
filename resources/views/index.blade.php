@@ -15,6 +15,7 @@
             <div id="search-box">
                 <select name="type" class="form-control">
                     <option value="vox">vox</option>
+                    <option value="great">长城乐器</option>
                  </select>
 
                 <div class="search-input">
@@ -22,7 +23,7 @@
                 </div>
             </div>
             <div id="search-button">
-                <button type="submit" class="btnbtn-default">搜索</button>
+                <button type="submit" class="btn btn-default">搜索</button>
             </div>
         </form>
     </div>

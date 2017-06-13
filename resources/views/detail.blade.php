@@ -15,8 +15,7 @@
     <form action="/import" method="post">
         {!! csrf_field() !!}
         <div class="panel panel-default">
-            <div class="panel-heading h2 text-center">{{$title}}</div>
-            <input type="hidden" name="goods_name" value="{{$title}}" />
+            <div class="panel-heading h2 text-center"><input type="text" name="goods_name" value="{{$title}}" /></div>
             <input type="hidden" name="images" value="{{$imagesJson}}">
             <input type="hidden" name="goods_desc" value="{{$content}}">
             <div class="panel-body">

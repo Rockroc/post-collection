@@ -25,9 +25,8 @@ class ResourceController extends Controller
     {
         set_time_limit(0);
         $type = $request->type;
-        $id = $request->id;
-        $res = $this->$type($id);
 
+        $res = $this->$type();
         //category
         $response = $this->http->post(env('ECSHOP_API_URL').'ecapi.category.list', [
             'form_params' => [
@@ -77,7 +76,44 @@ class ResourceController extends Controller
         }
     }
 
-    public function vox($id)
+    public function great()
+    {
+        header("Content-type: text/html; charset=gb2312");
+
+        $url = "http://www.musicgw.com/product/view.asp?id={$_GET['id']}";
+        $response = $this->http->get($url, []);
+        $output = $response->getBody();
+
+        $prel = "/<p class=p-sku>(.*)<span>(.*)(?=<\/span>)/";
+        preg_match($prel, $output, $arr);
+        $title = $arr[2];
+
+        $html = $html=preg_replace("/[\t\n\r]+/","",$output);
+        $prel = "/<div class=\"hide productinfo\">(.*)(?=<div class=\"hide brandinfo\">)/";
+
+        preg_match($prel, $html, $arr);
+        $content = $arr[0];
+
+//        echo $html;
+//        $prel = "/<A style=\"DISPLAY: none\" id=show_big_img\s*href=\"(.*)\" target=_blank>/";
+        $prel = "/change_img\(\'(.*)\'(?=,'\.)/i";
+        preg_match_all($prel, $output, $arr);
+        $base_url = "http://www.musicgw.com/";
+
+        $images = array();
+        foreach($arr[1] as $value){
+            $images[] = $base_url.$value;
+        }
+
+        return [
+            'title'=>@iconv('gb2312','UTF-8',$title),
+            'content'=>@iconv('gb2312','UTF-8',$content),
+            'images'=>$images
+        ];
+
+    }
+
+    public function vox()
     {
 
 

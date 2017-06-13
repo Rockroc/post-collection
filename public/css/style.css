@@ -34,9 +34,8 @@ body{
 
 #search-button button{
     margin-top:30px;
-    width:350px;
-    height:30px;
-    line-height: 30px;
+    width:100%;
+
 }
 
 #list-box{

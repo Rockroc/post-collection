@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Response;
 
 class SearchController extends Controller
 {
@@ -17,11 +18,40 @@ class SearchController extends Controller
 
     public function index(Request $request)
     {
+
         $type = $request->type;
         $keyword = $request->keyword;
         $data = $this->$type($keyword);
-
+//        print_r($data);
         return view('search',compact('type','data'));
+    }
+
+    public function great($keyword)
+    {
+        header("Content-type: text/html; charset=gb2312");
+        $searchUrl = 'http://www.musicgw.com/product/list.asp';
+        $response = $this->http->post($searchUrl, [
+//            'headers' => [
+//                'Content-Type' => 'text/html;charset=gb2312'
+//            ],
+            'form_params' => [
+                'keyword' => @iconv('UTF-8','gb2312',$keyword),
+//                'button'=>'搜索'
+            ],
+        ]);
+        $output = $response->getBody();
+
+        $prel = '/\<li\>\<a\s*href=\"(.*)\"\s*class=\"img\"\>\s*\<img\s(.*)\s*<\/a\>\<a\shref=\"(.*)\">(.*)\<\/a\>\<\/li\>/';
+        preg_match_all($prel, $output, $table);
+
+        $data = array();
+        foreach($table[3] as $key=>$value){
+            $data[$key]['name'] = @iconv('gb2312','UTF-8',$table[4][$key]);
+            $data[$key]['query'] = parse_url($value)['query'];
+        }
+
+        return $data;
+
     }
 
 
