@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Intervention\Image\Image;
 use Qiniu\Storage\UploadManager;
 use Qiniu\Auth;
 use GuzzleHttp\Client;
@@ -82,7 +83,7 @@ class ResourceController extends Controller
                 $img = $image_base_url.$item[0];
                 $test[] = $img;
                 //下载并保存图片
-                $imgData = $this->download_image($img,'','uploads/');
+                $imgData = $this->download_image($img,'','uploads/',array('jpg', 'gif', 'png','jpeg'),1,false);
                 //上传图片
                 $res = $this->upload($imgData['saveDir'].$imgData['fileName']);
                 if($res){
@@ -124,12 +125,12 @@ class ResourceController extends Controller
         preg_match($prel, $output, $arr);
         $title = $arr[2];
 
-        $html = $html=preg_replace("/[\t\n\r]+/","",$output);
+        $html = preg_replace("/[\t\n\r]+/","",$output);
+        $html = preg_replace("/(&#\d*;)/"," ",$html);
         $prel = "/<div class=\"hide productinfo\">(.*)(?=<div class=\"hide brandinfo\">)/";
 
         preg_match($prel, $html, $arr);
         $content = $arr[0];
-
 
 
 //        echo $html;
@@ -252,7 +253,7 @@ class ResourceController extends Controller
         }
     }
 
-    private function download_image($url, $fileName = '', $dirName, $fileType = array('jpg', 'gif', 'png','jpeg'), $type = 1)
+    private function download_image($url, $fileName = '', $dirName, $fileType = array('jpg', 'gif', 'png','jpeg'), $type = 1,$saveState=true)
     {
         if ($url == '')
         {
@@ -305,6 +306,33 @@ class ResourceController extends Controller
         $res = fopen($dirName . '/' . $fileName, 'a');
         fwrite($res, $file);
         fclose($res);
+
+
+        if($saveState){
+            $img = \Intervention\Image\Facades\Image::make($dirName.$fileName);
+            $width = $img->width();
+            $height = $img->height();
+
+            $canvas = \Intervention\Image\Facades\Image::canvas(400, 400, '#ccc');
+
+
+            if($width>$height){
+                $img->resize(414, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+            }else{
+                $img->resize(null, 414, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+            }
+
+            $canvas->insert($img, 'center');
+
+            $canvas->save($dirName.$fileName);
+        }
+
 
         return array(
             'fileName' => $fileName,
