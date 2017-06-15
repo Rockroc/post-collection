@@ -316,7 +316,7 @@ class ResourceController extends Controller
             $width = $img->width();
             $height = $img->height();
 
-            $canvas = \Intervention\Image\Facades\Image::canvas(400, 400, '#ccc');
+            $canvas = \Intervention\Image\Facades\Image::canvas(400, 400, '#ffffff');
 
 
             if($width>$height){
