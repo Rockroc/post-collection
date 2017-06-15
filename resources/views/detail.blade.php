@@ -62,7 +62,7 @@
                 </li>
                 <li class="list-group-item list-item-height">
                     <div class="form-group">
-                        <label for="inputEmail3" class="col-xs-2 col-sm-2 control-label">本店价格</label>
+                        <label for="inputEmail3" class="col-xs-2 col-sm-2 control-label">批发价</label>
                         <div class="col-sm-10 col-xs-10">
                             <input type="number" class="form-control" id="inputEmail3" name="shop_price" placeholder="价格">
                         </div>
@@ -70,9 +70,17 @@
                 </li>
                 <li class="list-group-item list-item-height">
                     <div class="form-group">
-                        <label for="inputEmail3" class="col-xs-2 col-sm-2 control-label">市场价格</label>
+                        <label for="inputEmail3" class="col-xs-2 col-sm-2 control-label">建议零售价</label>
                         <div class="col-sm-10 col-xs-10">
                             <input type="number" class="form-control" id="inputEmail3" name="market_price" placeholder="价格">
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item list-item-height">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-xs-2 col-sm-2 control-label">最低零售价</label>
+                        <div class="col-sm-10 col-xs-10">
+                            <input type="number" class="form-control" id="inputEmail3" name="min_price" placeholder="价格">
                         </div>
                     </div>
                 </li>

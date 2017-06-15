@@ -107,6 +107,7 @@ class ResourceController extends Controller
                 'brand_id'=>$request->brand_id,
                 'shop_price'=>$request->shop_price,
                 'market_price'=>$request->market_price,
+                'min_price'=>$request->min_price,
                 'goods_desc'=>base64_encode($content),
                 'galleries'=>$ecshopImg
             ],
