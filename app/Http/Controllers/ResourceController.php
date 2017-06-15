@@ -80,6 +80,9 @@ class ResourceController extends Controller
             $image_base_url = 'http://www.musicgw.com/';
             foreach($arr[1] as $value){
                 preg_match("/Uploadfile(.*)/i",$value,$item);
+                if(!$item){
+                    preg_match("/upfile(.*)/i",$value,$item);
+                }
                 $img = $image_base_url.$item[0];
                 $test[] = $img;
                 //下载并保存图片
