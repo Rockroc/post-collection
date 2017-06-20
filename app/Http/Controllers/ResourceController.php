@@ -317,16 +317,16 @@ class ResourceController extends Controller
             $width = $img->width();
             $height = $img->height();
 
-            $canvas = \Intervention\Image\Facades\Image::canvas(410, 410, '#ffffff');
+            $canvas = \Intervention\Image\Facades\Image::canvas(850, 850, '#ffffff');
 
 
             if($width>$height){
-                $img->resize(410, null, function ($constraint) {
+                $img->resize(850, null, function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 });
             }else{
-                $img->resize(null, 410, function ($constraint) {
+                $img->resize(null, 850, function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 });
