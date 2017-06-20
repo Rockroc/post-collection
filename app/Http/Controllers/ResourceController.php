@@ -37,7 +37,7 @@ class ResourceController extends Controller
         $response = $this->http->post(env('ECSHOP_API_URL').'ecapi.category.list', [
             'form_params' => [
                 'page' => 1,
-                'per_page' => 30
+                'per_page' => 50
             ],
         ]);
         $categories = Arr::get(json_decode((string)$response->getBody(),true),'categories');
@@ -47,7 +47,7 @@ class ResourceController extends Controller
 
             'form_params' => [
                 'page' => 1,
-                'per_page' => 30
+                'per_page' => 100
             ],
         ]);
         $brands = Arr::get(json_decode((string)$response->getBody(),true),'brands');
