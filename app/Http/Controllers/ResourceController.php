@@ -134,6 +134,16 @@ class ResourceController extends Controller
         preg_match($prel, $output, $arr);
         $title = $arr[1];
 
+        mkdir('uploads/'.$title, 0777, true);
+        file_put_contents('uploads/'.$title.'/url.txt',$url);
+//        $html = preg_replace("/[\t\n\r]+/","",$output);
+//        $prel = '/<div class=\"PInfoTDT\">(.*)<\/div>(.*)/';
+//
+//        preg_match($prel, $html, $arr);
+//
+//        print_r($arr);die();
+//        $content = $arr[0];
+
         //图片匹配
         $prel = "/\'pic\':\'(.*)\'\,(.*)/";
         preg_match($prel, $output, $table);
