@@ -37,9 +37,7 @@ class ResourceController extends Controller
         $res = $this->$type();
 
         if($type=='hongli'){
-
             return \Illuminate\Support\Facades\Response::download($res);
-
         }
 
         //category
@@ -141,7 +139,7 @@ class ResourceController extends Controller
         preg_match($prel, $output, $table);
         $prel = "/\/upload\/(.*?((\.gif|\.jpg|\.png|\.jpeg)))/";
         preg_match_all($prel, $table[0], $arr);
-        print_r($arr[0]);
+
         $base_url = 'http://www.hlmusic.com.cn';
         $images = array();
         foreach($arr[0] as $key=>$value){
