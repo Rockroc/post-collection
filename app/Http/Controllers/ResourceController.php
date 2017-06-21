@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\File;
 use Intervention\Image\Image;
 use Qiniu\Storage\UploadManager;
 use Qiniu\Auth;
@@ -33,6 +35,13 @@ class ResourceController extends Controller
         $type = $request->type;
 
         $res = $this->$type();
+
+        if($type=='hongli'){
+
+            return \Illuminate\Support\Facades\Response::download($res);
+
+        }
+
         //category
         $response = $this->http->post(env('ECSHOP_API_URL').'ecapi.category.list', [
             'form_params' => [
@@ -115,6 +124,44 @@ class ResourceController extends Controller
         if($response){
             echo '导入成功';
         }
+    }
+
+    public function hongli()
+    {
+        $url = "http://www.hlmusic.com.cn/productshow.aspx?pid={$_GET['pid']}";
+        $response = $this->http->get($url, []);
+        $output = $response->getBody();
+
+        $prel = '/<h1>\s*(.*)<\/h1>/';
+        preg_match($prel, $output, $arr);
+        $title = $arr[1];
+
+        //图片匹配
+        $prel = "/\'pic\':\'(.*)\'\,(.*)/";
+        preg_match($prel, $output, $table);
+        $prel = "/\/upload\/(.*?((\.gif|\.jpg|\.png|\.jpeg)))/";
+        preg_match_all($prel, $table[0], $arr);
+        print_r($arr[0]);
+        $base_url = 'http://www.hlmusic.com.cn';
+        $images = array();
+        foreach($arr[0] as $key=>$value){
+            $imgUrl = $base_url.$value;
+            $images[] = $imgUrl;
+            $res = $this->download_image($imgUrl,$fileName = '', 'uploads/'.$title, $fileType = array('jpg', 'gif', 'png','jpeg'), $type = 1,$saveState=false);
+        }
+
+        if(file_exists('uploads/'.$title.'.zip')){
+            unlink('uploads/'.$title.'.zip');
+        }
+        $zip = \Comodojo\Zip\Zip::create('uploads/'.$title.'.zip');
+        $zip->add('uploads/'.$title);
+        $zip->close();
+        File::deleteDirectory('uploads/'.$title, $preserve = false);
+
+        return 'uploads/'.$title.'.zip';
+
+//        $manager = new \Comodojo\Zip\ZipManager();
+//        $manager->addZip( \Comodojo\Zip\Zip::create($title.'.zip') );
     }
 
     public function great()

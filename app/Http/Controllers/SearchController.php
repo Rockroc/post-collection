@@ -26,6 +26,26 @@ class SearchController extends Controller
         return view('search',compact('type','data'));
     }
 
+    public function hongli($keyword)
+    {
+        $searchUrl = 'http://www.hlmusic.com.cn/productsearch.aspx?kw='.$keyword;
+        $response = $this->http->post($searchUrl, [
+            'form_params' => [
+//                'keyword' => $keyword,
+            ],
+        ]);
+        $output = $response->getBody();
+//        echo $output;die();
+        $prel = '/<br \/><a href=\"(.*)\" target=\"_blank\">(.*)<\/a><\/li>/';
+        preg_match_all($prel, $output, $table);
+        $data = array();
+        foreach($table[1] as $key=>$value){
+            $data[$key]['name'] = $table[2][$key];
+            $data[$key]['query'] = parse_url($value)['query'];
+        }
+        return $data;
+    }
+
     public function great($keyword)
     {
         header("Content-type: text/html; charset=gb2312");
