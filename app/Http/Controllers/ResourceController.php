@@ -137,7 +137,7 @@ class ResourceController extends Controller
         $title = $titleArr[1];
 
         //图片
-        $preg = '/<a\shref="(.*)"\srel=/';
+        $preg = '/<li\s><a\shref="(.*)"\srel=/';
         preg_match_all($preg,$output,$imgArr);
         $base_url = "http://www.mooeraudio.com/";
         $images = array();
