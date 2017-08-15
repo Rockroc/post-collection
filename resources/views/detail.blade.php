@@ -84,6 +84,22 @@
                         </div>
                     </div>
                 </li>
+                <li class="list-group-item list-item-height">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-xs-2 col-sm-2 control-label">琴行价</label>
+                        <div class="col-sm-10 col-xs-10">
+                            <input type="number" class="form-control" id="inputEmail3" name="piano_price" placeholder="价格">
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item list-item-height">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-xs-2 col-sm-2 control-label">琴行机构价</label>
+                        <div class="col-sm-10 col-xs-10">
+                            <input type="number" class="form-control" id="inputEmail3" name="mechanism_price" placeholder="价格">
+                        </div>
+                    </div>
+                </li>
             </ul>
             <button style="width:100%;" class="btn btn-primary" type="submit">导入商品到ECSHOP</button>
         </div>
