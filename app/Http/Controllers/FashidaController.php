@@ -16,9 +16,9 @@ class FashidaController extends Controller
 
         header("Content-type: text/html; charset=gb2312");
 //        $url = 'http://www.fastgz.com/products/list.asp?classid=1';
-        $url = 'http://www.fastgz.com/products/list.asp?brandid=14&classid=1';
+        $url = 'http://www.fastgz.com/products/list.asp?brandid=14&classid=6';
 
-        $content = file_get_contents($url);
+
 
         $productUrl = 'http://www.fastgz.com/products/';
 
@@ -26,18 +26,18 @@ class FashidaController extends Controller
             $current_page = $param['page'];
             $total = $param['total'];
         }else{
+            $content = file_get_contents($url);
             //找出总页数
             $preg = '/<\/span>\/(\d*)/';
             preg_match($preg, $content, $pageArr);
             $current_page = 1;
             $total = $pageArr[1];
-            $total = 2;
         }
         $lists = $this->getListUrls($url,$current_page);
 
         foreach ($lists as $key => $value) {
             $uri = $productUrl . $value;
-            $this->collection($uri,$current_page,$total);
+            $this->collection($uri,'Fender');
         }
 
         if($current_page<$total){
@@ -48,12 +48,7 @@ class FashidaController extends Controller
             echo $total;
             echo 'ok';
         }
-
-        //获取当前页所有产品
-
-
     }
-
 
     public function getListUrls($url,$page)
     {
@@ -68,31 +63,34 @@ class FashidaController extends Controller
 
     }
 
-
     //获取详情并采集
-    public function collection($uri)
+    public function collection($uri,$brand)
     {
-
-
-
         header("Content-type: text/html; charset=gb2312");
-
         //获取详情页信息
         $html = file_get_contents($uri);
 
         $preg = '/<h2>(.*)<\/h2>/';
         preg_match($preg, $html, $titleArr);
+        if(!isset($titleArr[1])){
+            return;
+        }
         $titleN = $titleArr[1];
+
         $title = preg_replace("/(&#\d*;)/", '', $titleN);
+        $title = str_replace('/','\\',$title);
 
 //        $preg = '/<p>\p{Han}{2}：(.*)/';
         $preg = '/&gt;\s(\d*)<\/div>/';
         preg_match($preg, $html, $modelArr);
+        if(!isset($modelArr[1])){
+            return;
+        }
         $model = $modelArr[1];
 
 
-        $dir1 = 'products/dianjita/Fender' . '/' . $title;
-        $path = 'products/dianjita/Fender' . '/' . $title . '/' . $model;
+        $dir1 = 'products/beisiyinxiang/'.$brand . '/' . $title;
+        $path = 'products/beisiyinxiang/'.$brand . '/' . $title . '/' . $model;
 
         //生成目录
         if (!is_dir($dir1)) {
@@ -105,8 +103,11 @@ class FashidaController extends Controller
         //采集图片
         $preg = '/<img src=\"\/files\/products\/small\/(.*?((\.gif|\.jpg|\.png|\.jpeg)))/';
         preg_match($preg, $html, $imgArr);
-        $imgUrl = 'http://www.fastgz.com//files/products/small/' . $imgArr[1];
-        $this->download_image($imgUrl, $model, $path);
+        if(isset($imgArr[1])){
+            $imgUrl = 'http://www.fastgz.com//files/products/small/' . $imgArr[1];
+            $this->download_image($imgUrl, $model, $path);
+        }
+
 
         //采集简介
         $html = preg_replace("/[\t\n\r]+/", "", $html);
@@ -117,8 +118,9 @@ class FashidaController extends Controller
 //        $content = @iconv('gb2312', 'UTF-8', $contentArr[0]);
 //
 //        echo $content;
-
-        file_put_contents($path . '/content.html', $contentArr[0]);
+        if(isset($contentArr[0])){
+            file_put_contents($path . '/content.html', $contentArr[0]);
+        }
     }
 
 
@@ -171,11 +173,11 @@ class FashidaController extends Controller
         fclose($res);
 
 
-        $img = \Intervention\Image\Facades\Image::make($dirName . '/' . $fileName);
-
-        $img->rotate(90);
-
-        $img->save($dirName . '/' . $fileName);
+//        $img = \Intervention\Image\Facades\Image::make($dirName . '/' . $fileName);
+//
+//        $img->rotate(90);
+//
+//        $img->save($dirName . '/' . $fileName);
 
 
         return array(

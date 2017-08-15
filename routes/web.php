@@ -16,6 +16,8 @@ Route::get('/', function () {
 });
 
 Route::get('/fashida','FashidaController@index');
+Route::get('/fashida2','FashidaController@index2');
+Route::get('/fashida3','FashidaController@index3');
 Route::get('/fashida/collection','FashidaController@collection');
 
 Route::get('/search','SearchController@index');
