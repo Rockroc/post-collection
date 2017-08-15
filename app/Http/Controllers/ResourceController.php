@@ -124,6 +124,42 @@ class ResourceController extends Controller
         }
     }
 
+    public function mooer()
+    {
+        $url = $_GET['url'];
+
+        $response = $this->http->get($url, []);
+        $output = $response->getBody();
+//        echo $output;
+        //标题
+        $preg = '/<title>(.*)<\/title>/';
+        preg_match($preg,$output,$titleArr);
+        $title = $titleArr[1];
+
+        //图片
+        $preg = '/<a\shref="(.*)"\srel=/';
+        preg_match_all($preg,$output,$imgArr);
+        $base_url = "http://www.mooeraudio.com/";
+        $images = array();
+        if(isset($imgArr[1])){
+            foreach($imgArr[1] as $key=>$value){
+                $images[] = $base_url.$value;
+            }
+        }
+
+        //简介
+        $html = preg_replace("/[\t\n\r]+/","",$output);
+        $html = preg_replace("/(&#\d*;)/"," ",$html);
+        $preg = '/<div class="newsscon">(.*)<\/div>\s*<\/div>\s*<\/div>\s*(?=<div class="newssright">)/';
+        preg_match($preg,$html,$contentArr);
+        $content = $contentArr[1];
+        return [
+            'title'=>$title,
+            'content'=>$content,
+            'images'=>$images
+        ];
+    }
+
     public function hongli()
     {
         $url = "http://www.hlmusic.com.cn/productshow.aspx?pid={$_GET['pid']}";

@@ -17,6 +17,7 @@
                     <option value="vox">vox</option>
                     <option value="great">长城乐器</option>
                     <option value="hongli">弘力乐器</option>
+                    <option value="mooer">mooer</option>
                  </select>
 
                 <div class="search-input">

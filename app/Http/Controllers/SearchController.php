@@ -26,6 +26,26 @@ class SearchController extends Controller
         return view('search',compact('type','data'));
     }
 
+    public function mooer($keyword)
+    {
+        $searchUrl = 'http://www.mooeraudio.com/cn/?action=productlist&id=products&Submit=Search&keyword='.$keyword;
+        $response = $this->http->get($searchUrl);
+        $output = $response->getBody();
+
+        $titlePreg = '/<h1\s\S*\s\S*>(.*)<\/h1>/';
+        preg_match_all($titlePreg,$output,$titleArr);
+
+
+        $urlPreg = '/<li style="height:190px;"><a href="(.*)"(?=><img\ssrc=")/';
+        preg_match_all($urlPreg,$output,$urlArr);
+        $data = array();
+        foreach($titleArr[1] as $key=>$value){
+            $data[$key]['name'] = $value;
+            $data[$key]['query'] = 'url='.$urlArr[1][$key];
+        }
+        return $data;
+    }
+
     public function hongli($keyword)
     {
         $searchUrl = 'http://www.hlmusic.com.cn/productsearch.aspx?kw='.$keyword;
