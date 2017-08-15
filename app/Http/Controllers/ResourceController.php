@@ -104,6 +104,25 @@ class ResourceController extends Controller
             }
         }
 
+        if($request->type=='mooer'){
+            //匹配出详情里的图片上传到七牛并替换url
+            $prel = '/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg]))[\'|\"].*?[\/]?>/';
+            preg_match_all($prel, $content, $arr);
+            $image_base_url = 'http://www.mooeraudio.com/';
+            foreach($arr[1] as $value){
+                $img = $image_base_url.$value;
+                //下载并保存图片
+                $imgData = $this->download_image($img,'','uploads/',array('jpg', 'gif', 'png','jpeg'),1,false);
+                //上传图片
+                $res = $this->upload($imgData['saveDir'].$imgData['fileName']);
+                if($res){
+                    unlink($imgData['saveDir'].$imgData['fileName']);
+                    $replaceUrl = 'http://or6dx15ll.bkt.clouddn.com/'.$res['key'];
+                    $content = str_replace($value,$replaceUrl,$content);
+                }
+            }
+        }
+
 
 
         $response = $this->http->post(env('ECSHOP_API_URL').'ecapi.product.store', [
