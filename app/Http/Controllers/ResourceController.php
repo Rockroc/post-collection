@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Session;
 use Intervention\Image\Image;
 use Qiniu\Storage\UploadManager;
 use Qiniu\Auth;
@@ -65,7 +67,20 @@ class ResourceController extends Controller
 //        echo $content;
         $imagesJson = \GuzzleHttp\json_encode($images);
 
-        return view('detail', compact('type', 'images', 'title', 'content', 'categories', 'brands', 'imagesJson'));
+        if(Session::get('categoryId')){
+            $categoryId = Session::get('categoryId');
+        }else{
+            $categoryId = 0;
+        }
+
+        if(Session::get('brandId')){
+            $brandId = Session::get('brandId');
+        }else{
+            $brandId = 0;
+        }
+
+
+        return view('detail', compact('type', 'images', 'title', 'content', 'categories', 'brands', 'imagesJson','categoryId','brandId'));
     }
 
     public function import(Request $request)
@@ -139,6 +154,11 @@ class ResourceController extends Controller
                 'galleries'       => $ecshopImg
             ],
         ]);
+
+        //生成分类和品牌选中cookie
+        Session::put('categoryId', $request->cat_id);
+        Session::put('brandId', $request->brand_id);
+
         if ($response) {
             echo '导入成功';
         }

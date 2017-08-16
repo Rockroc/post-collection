@@ -37,7 +37,7 @@
                     <div class="form-group">
                         <label for="inputEmail3" class="col-xs-2 col-sm-2 control-label">分类</label>
                         <div class="col-sm-10 col-xs-10">
-                            <select name="cat_id" class="form-control">
+                            <select id="category" name="cat_id" class="form-control">
                                 @foreach($categories as $item)
                                     <option value="{{$item['id']}}">{{$item['name']}}</option>
                                     @foreach($item['categories'] as $row)
@@ -52,7 +52,7 @@
                     <div class="form-group">
                         <label for="inputEmail3" class="col-xs-2 col-sm-2 control-label">品牌</label>
                         <div class="col-sm-10 col-xs-10">
-                            <select name="brand_id" class="form-control">
+                            <select id="brand" name="brand_id" class="form-control">
                                 @foreach($brands as $item)
                                 <option value="{{$item['id']}}">{{$item['name']}}</option>
                                 @endforeach
@@ -106,6 +106,29 @@
     </form>
 </div>
 
+<script>
+    function set_select_checked(selectId, checkValue){
+        var select = document.getElementById(selectId);
+
+        for (var i = 0; i < select.options.length; i++){
+            if (select.options[i].value == checkValue){
+                select.options[i].selected = true;
+                break;
+            }
+        }
+    }
+
+    @if($categoryId != 0)
+        set_select_checked('category',{{$categoryId}});
+    @endif
+
+    @if($brandId != 0)
+        set_select_checked('brand',{{$brandId}});
+    @endif
+
+
+
+</script>
 
 </body>
 </html>
