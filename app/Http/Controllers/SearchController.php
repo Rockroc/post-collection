@@ -80,7 +80,6 @@ class SearchController extends Controller
             ],
         ]);
         $output = $response->getBody();
-
         $prel = '/\<li\>\<a\s*href=\"(.*)\"\s*class=\"img\"\>\s*\<img\s(.*)\s*<\/a\>\<a\shref=\"(.*)\">(.*)\<\/a\>\<\/li\>/';
         preg_match_all($prel, $output, $table);
 
